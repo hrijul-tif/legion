@@ -1,0 +1,44 @@
+/* Shared Monaco chrome for the read-only code and diff viewers. */
+.mos-glyph {
+  cursor: pointer;
+}
+.mos-glyph::before {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 3px 0 0 3px;
+  background-color: var(--tone-info);
+  -webkit-mask: var(--mos-glyph-icon) center / contain no-repeat;
+  mask: var(--mos-glyph-icon) center / contain no-repeat;
+}
+.mos-glyph-comment {
+  --mos-glyph-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/%3E%3C/svg%3E");
+}
+.mos-glyph-comment.mos-glyph-resolved::before {
+  background-color: var(--tone-muted);
+}
+.mos-glyph-comment.mos-glyph-open::before {
+  background-color: var(--tone-warn);
+}
+.mos-glyph-add {
+  --mos-glyph-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M5 12h14M12 5v14'/%3E%3C/svg%3E");
+}
+.mos-glyph-add::before {
+  background-color: var(--primary);
+  border-radius: 4px;
+  padding: 1px;
+}
+.mos-line-focus {
+  background: color-mix(in oklch, var(--primary) 14%, transparent);
+  box-shadow: inset 2px 0 0 var(--primary);
+}
+.mos-line-focus-gutter {
+  background: color-mix(in oklch, var(--primary) 14%, transparent);
+}
+.monaco-editor .mos-zone {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: 0;
+}

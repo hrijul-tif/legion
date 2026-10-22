@@ -1,0 +1,25 @@
+[project]
+name = "mos-runner"
+version = "0.1.0"
+description = "Server-side runner that executes a MOS procedure against a Bifrost SILS with the real mos-framework"
+requires-python = ">=3.12,<3.13"
+# Pinned to what mos-framework's requirements.txt pins. gss-commons (private) is not imported by the
+# modules a procedure uses, so it is skipped. tqdm is only used by framework.utils.file_transfer.
+dependencies = [
+  "pydantic==2.6.1",
+  "pydantic-settings==2.1.0",
+  "yamcs-client==1.10.0",
+  "protobuf==3.20.3",
+  "inquirer==3.1.4",
+  "rich==13.7.1",
+  "csv-logger==1.3.0",
+  "python-dateutil==2.8.2",
+  "python-dotenv==1.0.0",
+  "tqdm==4.66.4",
+  "typing_extensions>=4.8.0",
+  # only needed for `npm run bifrost:gen-mdb`
+  "datamodel-code-generator==0.25.3",
+]
+
+[tool.uv]
+package = false

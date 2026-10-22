@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated / third-party assets (copied by scripts/vendor-assets.ts) and the Bifrost runner's work copy.
+    "public/vendor/**",
+    "runner/.work/**",
+    "runner/.venv/**",
   ]),
 ]);
 

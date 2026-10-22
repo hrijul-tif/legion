@@ -1,0 +1,242 @@
+{
+  "$schema": "./sim.schema.json",
+  "description": "Mock FF spacecraft: initial telemetry and command effects used by the Dry run sandbox (also covers every procedure in seed/).",
+  "defaultCadence": 1,
+  "latency": [
+    0.4,
+    1.2
+  ],
+  "initial": {
+    "/FF/OBC/Reset_Counter": 12,
+    "/FF/OBC/Uptime": 86400,
+    "/FF/OBC/Last_Reset_Reason": "BM_LAST_RESET_TYPE_GENERAL_RST",
+    "/FF/Arbitrator/Active_OBC": "OBC_1",
+    "/FF/EPS/slrPnl3ShntThd_Vol": 3.0,
+    "/FF/Arbitrator/Active_SBand_Transmitter": "SBT_2",
+    "/FF/Arbitrator/Tm_Mode": "BUTLER_TM_MODE_RTM",
+    "/FF/Arbitrator/Default_SbtId": "SBT_1",
+    "/FF/EPS/obc1Mn_SwtSt": "On",
+    "/FF/EPS/sbt1_PhrlSt": "On",
+    "/FF/EPS/prpDig_PhrlSt": "On",
+    "/FF/EPS/prpAct_PhrlSt": "On",
+    "/FF/EPS/EPSMode": "Nominal",
+    "/FF/EPS/satBusMn_Vol": 28.1,
+    "/FF/EPS/satBusMn_HpCur": 1.4,
+    "/FF/EPS/Rwl1_SwtSt": "On",
+    "/FF/EPS/Rwl2_SwtSt": "On",
+    "/FF/EPS/Rwl3_SwtSt": "On",
+    "/FF/EPS/Rwl4_SwtSt": "On",
+    "/FF/AOCS/Rwl_BdyMom_norm": 0.02,
+    "/FF/AOCS/gyroBdyInrtlCorr_NormalizedDerived": 0.2,
+    "/FF/AOCS/bdotCtrl_Gn": 0.3,
+    "/FF/OBC/FV": 215,
+    "/FF/System/SysMode": "Safe_Mode",
+    "/FF/Thermal/Intbatt1_ATcSt": "Auto",
+    "/FF/Propulsion/satDrv_CtrlSt": "Idle",
+    "/FF/Payload/default_nccm1SensorVFlip": 0,
+    "/FF/Payload/default_nccm2Sensor_Pgain": 2,
+    "/FF/SBand/sbt1Tx_ActvFrq": 2245000000,
+    "/FF/Thermal/Intbatt1_HtrSt": "Off"
+  },
+  "rates": {
+    "/FF/OBC/Uptime": 1
+  },
+  "cadence": {},
+  "effects": [
+    {
+      "command": "/FF/EPS/Get_slrPnl_Thrld",
+      "comment": "Reports the threshold table: the parameter gets a fresh sample right away.",
+      "sample": [
+        "/FF/EPS/slrPnl3ShntThd_Vol"
+      ]
+    },
+    {
+      "command": "/FF/EPS/Set_slrPnl3_Thrld",
+      "delay": 0.8,
+      "set": {
+        "/FF/EPS/slrPnl3ShntThd_Vol": {
+          "fromArg": "Threshold"
+        }
+      }
+    },
+    {
+      "command": "/FF/Arbitrator/Reset_OBC",
+      "comment": "Soft reset: counter +1, uptime restarts, active OBC unchanged.",
+      "delay": 1.0,
+      "set": {
+        "/FF/OBC/Reset_Counter": {
+          "add": 1
+        },
+        "/FF/OBC/Uptime": 5,
+        "/FF/OBC/Last_Reset_Reason": "BM_LAST_RESET_TYPE_SOFT_RST"
+      }
+    },
+    {
+      "command": "/FF/EPS/Swt_obc1Mn",
+      "comment": "OBC-1 main switch follows the commanded state.",
+      "delay": 0.6,
+      "set": {
+        "/FF/EPS/obc1Mn_SwtSt": {
+          "fromArg": "On_Off_State"
+        }
+      }
+    },
+    {
+      "command": "/FF/EPS/Swt_sbt1Rd",
+      "comment": "S-band radio 1 redundant switch drives the SBT-1 peripheral state.",
+      "delay": 0.6,
+      "set": {
+        "/FF/EPS/sbt1_PhrlSt": {
+          "fromArg": "On_Off_State"
+        }
+      }
+    },
+    {
+      "command": "/FF/Arbitrator/Set_Default_SbtId",
+      "delay": 0.8,
+      "set": {
+        "/FF/Arbitrator/Default_SbtId": {
+          "fromArg": "SBT"
+        }
+      }
+    },
+    {
+      "command": "/FF/Arbitrator/Get_Default_SbtId",
+      "sample": [
+        "/FF/Arbitrator/Default_SbtId"
+      ]
+    },
+    {
+      "command": "/FF/Arbitrator/Set_Nominal_Bitrate",
+      "comment": "Both transmitters report the new bitrate label (the real one only changes on the active SBT).",
+      "delay": 0.8,
+      "set": {
+        "/FF/SBand/sbt1Tx_ActvBrt": {
+          "fromArg": "Bitrate"
+        },
+        "/FF/SBand/sbt2Tx_ActvBrt": {
+          "fromArg": "Bitrate"
+        }
+      }
+    },
+    {
+      "command": "/FF/OBC/Get_FirmwareVersion",
+      "sample": [
+        "/FF/OBC/FV"
+      ]
+    },
+    {
+      "command": "/FF/AOCS/Set_BdotCtrl_Gn",
+      "delay": 0.8,
+      "set": {
+        "/FF/AOCS/bdotCtrl_Gn": {
+          "fromArg": "K_BdotController"
+        }
+      }
+    },
+    {
+      "command": "/FF/AOCS/Get_BdotCtrl_Gn",
+      "sample": [
+        "/FF/AOCS/bdotCtrl_Gn"
+      ]
+    },
+    {
+      "command": "/FF/Thermal/Set_Intbatt1_ATcSt",
+      "delay": 0.8,
+      "set": {
+        "/FF/Thermal/Intbatt1_ATcSt": {
+          "fromArg": "Mode"
+        }
+      }
+    },
+    {
+      "command": "/FF/System/Set_Satellite_To_SafeMode",
+      "comment": "Safe mode enter / exit.",
+      "when": {
+        "Trigger": "Enter"
+      },
+      "delay": 1.5,
+      "set": {
+        "/FF/System/SysMode": "Safe_Mode"
+      }
+    },
+    {
+      "command": "/FF/System/Set_Satellite_To_SafeMode",
+      "when": {
+        "Trigger": "Exit"
+      },
+      "delay": 1.5,
+      "set": {
+        "/FF/System/SysMode": "Idle"
+      }
+    },
+    {
+      "command": "/FF/Propulsion/Start_satDrv_Htng",
+      "comment": "Heating starts in the requested mode for the requested duration.",
+      "delay": 1.0,
+      "set": {
+        "/FF/Propulsion/satDrv_CtrlSt": {
+          "fromArg": "Mode"
+        },
+        "/FF/Propulsion/SatDriveHeatingDuration": {
+          "fromArg": "Duration"
+        }
+      }
+    },
+    {
+      "command": "/FF/Propulsion/Get_satDrv_htng_duration",
+      "sample": [
+        "/FF/Propulsion/SatDriveHeatingDuration"
+      ]
+    },
+    {
+      "command": "/FF/SBand/Set_sbt1Tx_ActvFrq",
+      "delay": 0.8,
+      "set": {
+        "/FF/SBand/sbt1Tx_ActvFrq": {
+          "fromArg": "Frequency"
+        }
+      }
+    },
+    {
+      "command": "/FF/Payload/Set_default_nccm1VFlip",
+      "delay": 0.8,
+      "set": {
+        "/FF/Payload/default_nccm1SensorVFlip": {
+          "fromArg": "State"
+        }
+      }
+    },
+    {
+      "command": "/FF/Payload/Get_default_nccm1VFlip",
+      "sample": [
+        "/FF/Payload/default_nccm1SensorVFlip"
+      ]
+    },
+    {
+      "command": "/FF/Payload/Set_default_nccm2Sensor_Pgain",
+      "delay": 0.8,
+      "set": {
+        "/FF/Payload/default_nccm2Sensor_Pgain": {
+          "fromArg": "PGain"
+        }
+      }
+    },
+    {
+      "command": "/FF/Payload/Get_default_nccm2Sensor_Pgain",
+      "sample": [
+        "/FF/Payload/default_nccm2Sensor_Pgain"
+      ]
+    },
+    {
+      "command": "/FF/Thermal/Set_Intbatt1_HtrSt",
+      "comment": "Internal battery heater 1 on/off.",
+      "delay": 0.8,
+      "set": {
+        "/FF/Thermal/Intbatt1_HtrSt": {
+          "fromArg": "Status"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MOS sandbox sim file",
+  "description": "Initial state and command effects of the mock spacecraft (public/sim/<mission>-sim.json).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "description": { "type": "string" },
+    "defaultCadence": {
+      "type": "number",
+      "minimum": 0,
+      "default": 1,
+      "description": "Virtual seconds between telemetry samples of every parameter (0 = no periodic samples)."
+    },
+    "latency": {
+      "type": "array",
+      "items": { "type": "number", "minimum": 0 },
+      "minItems": 1,
+      "maxItems": 2,
+      "description": "[min, max] virtual seconds a command takes to complete when the effect has no `delay`. Default [0.4, 1.2]."
+    },
+    "commandCounter": {
+      "type": "string",
+      "description": "Qualified name of the pseudo-parameter that counts issued commands. Default /MOS/CommandCounter."
+    },
+    "initial": {
+      "type": "object",
+      "description": "Initial value per parameter (qualified name or generated class name). Enum parameters take the enum member value (member names and case-insensitive labels are accepted). Parameters not listed start at their type default: enum = first member, numbers = 0, bool = false, string = ''.",
+      "additionalProperties": true
+    },
+    "cadence": {
+      "type": "object",
+      "description": "Per-parameter sampling period in virtual seconds (overrides defaultCadence; 0 = only event driven samples).",
+      "additionalProperties": { "type": "number", "minimum": 0 }
+    },
+    "rates": {
+      "type": "object",
+      "description": "Numeric parameters that change continuously: value = last set value + rate * seconds since it was set (e.g. an uptime counter with rate 1).",
+      "additionalProperties": { "type": "number" }
+    },
+    "effects": {
+      "type": "array",
+      "description": "What commands do. All effects matching an issued command are applied when the command completes successfully.",
+      "items": { "$ref": "#/definitions/effect" }
+    }
+  },
+  "definitions": {
+    "setValue": {
+      "description": "A literal value, or one of the dynamic forms.",
+      "oneOf": [
+        { "type": ["number", "string", "boolean", "null", "array"] },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "fromArg": { "type": "string", "description": "Wire name of a command argument; its value is copied." } },
+          "required": ["fromArg"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "add": { "type": "number", "description": "Previous value + n." } },
+          "required": ["add"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "expr": { "type": "string", "description": "Python expression. Names: args (dict of wire args; each arg is also a plain variable), prev (previous value), t (virtual seconds), math, min, max, abs, round, int, float, str." } },
+          "required": ["expr"]
+        }
+      ]
+    },
+    "setMap": {
+      "type": "object",
+      "description": "Parameter qualified name -> new value. Each change also produces an immediate telemetry sample.",
+      "additionalProperties": { "$ref": "#/definitions/setValue" }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command"],
+      "properties": {
+        "comment": { "type": "string" },
+        "command": {
+          "type": "string",
+          "description": "Qualified command name (/FF/EPS/Set_slrPnl3_Thrld), generated class name (EPSSetSlrPnl3Thrld) or a glob (/FF/EPS/Set_*)."
+        },
+        "when": {
+          "type": "object",
+          "description": "Only match when these wire arguments have these values (a list means any of; strings and numbers compare loosely).",
+          "additionalProperties": true
+        },
+        "delay": { "type": "number", "minimum": 0, "description": "Virtual seconds from issue to completion (default: random within `latency`)." },
+        "set": { "$ref": "#/definitions/setMap" },
+        "sample": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Parameters that get an immediate telemetry sample on completion (without changing their value)."
+        },
+        "then": {
+          "type": "array",
+          "description": "Follow-up changes scheduled after completion.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["after", "set"],
+            "properties": {
+              "after": { "type": "number", "minimum": 0, "description": "Virtual seconds after command completion." },
+              "set": { "$ref": "#/definitions/setMap" }
+            }
+          }
+        },
+        "fail": { "type": "boolean", "description": "Make the command fail (ack NOK) whenever this effect matches." }
+      }
+    }
+  }
+}

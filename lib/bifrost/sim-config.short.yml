@@ -1,0 +1,108 @@
+initialConditions:
+  TLE: '1 99999U 26001A   26330.00000000  .00000000  00000+0  00000+0 0  9996
+
+    2 99999  37.0000 150.3400 0000000 180.0000 180.0000 15.21936523    05
+
+    '
+  injectionEpoch: 2026 NOV 26 00:00:00.000
+  rN_m_Override:
+  - -5976944.2186331125
+  - 3403660.734873147
+  - 2.3283064365386963e-10
+  vN_mps_Override:
+  - -3008.552071832135
+  - -5283.119944345433
+  - 4581.381927851493
+  omega_BN_B:
+  - 0.0
+  - 0.0
+  - 0.0
+  rwspeed:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  q_BN:
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  simStartEpoch: 2026 NOV 26 00:00:00.000
+  temperatureSensorInitialValues:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  useTLE: false
+  plus_deploy_mode: Nominal
+  minus_deploy_mode: Nominal
+  plus_deploy_delay: 0
+  minus_deploy_delay: 0
+  snap_signal_egse: 1
+  snap_signal_launcher: 1
+environment:
+  atmosphere:
+    ap_daily: 8
+    ap_3hr: 8
+    f107_daily: 110
+    f107_average: 110
+  enableAlbedo: false
+simulationSpeed: Accelerated
+simulationTime: 600.0 s
+satellite: Jatayu
+fswVersion: jtyu-v15.0.3
